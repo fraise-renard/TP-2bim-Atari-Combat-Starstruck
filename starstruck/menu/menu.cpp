@@ -4,21 +4,26 @@
  *  Created on: 26 de mai. de 2023
  *      Author: hayde
  */
-#include "menu.hpp"
+#include <iostream>
+#include "screen/screen.hpp"
+#include "Menu.hpp"
 #include <iostream>
 
 //Fornece altura e largura da janela e incializa os textos do menu
-Menu::Menu(float width, float height) {
-	this->height = height;
-	this->width = width;
+Menu::Menu(float width, float height){
 
-	//Error catch
+	this -> width = width;
+	this -> height = height;
+
 	font.loadFromFile("assets/ARIAL.ttf");
+	//Error catch
 	if (!font.loadFromFile("assets/ARIAL.ttf")) {
 		std::cout << "Error loading font";
 	}
 
 	sf::FloatRect textRect; //limites do texto
+
+	//Definicao de opcoes do menu
 	menu[0].setString("Play");
 	menu[1].setString("Options");
 	menu[2].setString("Exit");
@@ -26,6 +31,7 @@ Menu::Menu(float width, float height) {
 	for (int i = 0; i < 3; i++) {
 		menu[i].setCharacterSize(56);
 		menu[i].setFont(font);
+		menu[i].setFillColor(sf::Color::Black);
 		textRect = menu[i].getLocalBounds();
 		menu[i].setOrigin(textRect.width / 2, textRect.height / 2); //origem no meio do texto
 	}
@@ -35,18 +41,19 @@ Menu::Menu(float width, float height) {
 //Desenha os textos
 void Menu::draw(sf::RenderWindow &window) {
 
-	int pos = -100;
+	if(inScreen){
+		int pos = -100; //para as opcoes ficarem embaixo da outra
 
-	for (int i = 0; i < 3; i++) {
-		menu[i].setPosition(window.getSize().x / 2,
-				(window.getSize().y / 2) + pos);
-		pos += 100;
-		window.draw(menu[i]);
+			for (int i = 0; i < 3; i++) {
+				menu[i].setPosition(width / 2, (height / 2)+pos);
+				pos += 100;
+				window.draw(menu[i]);
+			}
 	}
 
 }
 
-void key_manager(Menu menu, sf::Event event) {
+/*void key_manager(Menu menu, sf::Event event) {
 	switch (event.type) {
 	case sf::Event::KeyReleased:
 		switch (event.key.code) {
@@ -59,7 +66,7 @@ void key_manager(Menu menu, sf::Event event) {
 		}
 		break;
 	}
-}
+*/
 
 void Menu::move_up() {
 	if (selected_index - 1 >= 0) { //só move pra cima se opcao 1, 2 ou 3 tiverem selecionadas

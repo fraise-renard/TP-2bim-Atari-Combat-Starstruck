@@ -6,6 +6,7 @@
  */
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include "screen/screen.hpp"
 #include "menu/menu.hpp"
 
 int main() {
@@ -14,10 +15,9 @@ int main() {
 
 	sf::RenderWindow window(vm, "SFML works!", sf::Style::Fullscreen);
 
-	sf::CircleShape shape(100.f);
-	    shape.setFillColor(sf::Color::Green);
-
 	Menu menu_state(vm.width, vm.height);
+	//primeira tela: menu
+	menu_state.inScreen = true;
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -30,18 +30,12 @@ int main() {
 					window.close();
 				}
 			}
-			menu_state.key_manager(menu_state, event);
+			//menu_state.key_manager(menu_state, event);
 		}
 
-		window.clear(sf::Color::White); //branco :)
-		menu_state.draw(window); ///teste legal
-		window.display(); //nubia linda cheirosa
-		//melzita eh top
-
-		//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-		//funciona plss <3 :D
-		//triste vida
-		//fieiguegeifwifwij
+		window.clear(sf::Color::White);
+		menu_state.draw(window); //só desenha se true
+		window.display();
 	}
 
 	return 0;
