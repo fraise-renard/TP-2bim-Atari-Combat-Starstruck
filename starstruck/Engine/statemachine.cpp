@@ -6,13 +6,13 @@
  */
 #include <Engine/statemachine.hpp>
 
-void StateMachine::addState(State* newState, bool replace){
+void StateMachine::addState(StateRef newState, bool replace){
 	add = true;
 	/*###REPLACE STATE
 	- useful in cases which previous states will not be reentered
 	- Ex: end level 1, replace with level 2, level 1 is unaccessable now */
 	this-> replace = replace;
-	this-> newState = newState; //possible queue state or actual state replacer
+	this-> newState = std::move(newState); //possible queue state or actual state replacer
 }
 
 void StateMachine::removeState(){
@@ -50,6 +50,6 @@ void StateMachine::doChanges(){
 	}
 }
 
-State* &StateMachine::getActualState(){ //returns actual state;
+StateRef &StateMachine::getActualState(){ //returns actual state;
 	return states.top();
 }

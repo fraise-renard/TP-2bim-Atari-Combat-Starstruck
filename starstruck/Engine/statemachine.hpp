@@ -7,19 +7,20 @@
 #pragma once
 #ifndef ENGINE_STATEMACHINE_HPP_
 #define ENGINE_STATEMACHINE_HPP_
-#include <Engine/state.hpp>
 #include "stdafx.hpp"
+#include <Engine/state.hpp>
 
+typedef std::unique_ptr<State> StateRef;
 class StateMachine{
 public:
 
-	void addState(State* newState, bool replace = true);
+	void addState(StateRef newState, bool replace = true);
 	void removeState();
 	void doChanges();
-	State* &getActualState();
+	StateRef &getActualState();
 private:
-	std::stack<State*> states;
-	State* newState;
+	std::stack<StateRef> states;
+	StateRef newState;
 	bool remove, replace, add;
 };
 

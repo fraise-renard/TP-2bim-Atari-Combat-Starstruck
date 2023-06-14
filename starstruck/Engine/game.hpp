@@ -7,9 +7,10 @@
 #pragma once
 #ifndef ENGINE_GAME_HPP_
 #define ENGINE_GAME_HPP_
-#include <States/menu.hpp>
 #include <stdafx.hpp>
 #include <Engine/type.hpp>
+#include <Engine/statemachine.hpp>
+#include <States/menuState.hpp>
 
 class Game{
 public:
@@ -19,7 +20,6 @@ private:
 	sf::Clock clock;
 	sf::Event event;
 	GameDataRef game_data = std::make_shared<GameData>();
-
 
 	void Run();
 };
