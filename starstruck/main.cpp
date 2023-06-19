@@ -4,12 +4,12 @@
  *  Created on: 25 de mai de 2023
  *      Author: user
  */
-#include <Engine/game.hpp>
+#include <Engine/application.hpp>
 #include "stdafx.hpp"
 
 int main() {
 
-	Game app(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+	Application app(ww, wh);
 
 	return 0;
 }

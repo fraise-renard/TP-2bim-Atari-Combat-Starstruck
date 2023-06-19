@@ -7,25 +7,26 @@
 #pragma once
 #ifndef STATES_GAMESTATE_HPP_
 #define STATES_GAMESTATE_HPP_
+#include <Engine/gamedata.hpp>
 #include <Engine/state.hpp>
-#include <Engine/type.hpp>
 #include <stdafx.hpp>
+#include <Entities/player.hpp>
 
 
 class GameState: public State {
 public:
 	GameState(GameDataRef data);
 	void init();
+	void update();
 	void handleInput();
-	void draw(const float dt);
+	void draw();
 	//void handleInput();
 	//void update(const float dt);
 	//void handleInput();
 
 private:
 	GameDataRef data;
-	sf::Texture button_tex;
-	sf::Sprite button;
+	std::vector<Player> players;
 };
 
 #endif /* STATES_GAMESTATE_HPP_ */

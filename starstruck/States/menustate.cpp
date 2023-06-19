@@ -25,8 +25,8 @@ void MenuState::init() {
 		menu[i].setCharacterSize(100);
 		textbounds = menu[i].getLocalBounds();
 		menu[i].setOrigin(textbounds.width / 2, textbounds.height / 2);
-		menu[i].setPosition(data->window.getSize().x / 2,
-				data->window.getSize().y / 2 + distance);
+		menu[i].setPosition(ww / 2,
+				wh / 2 + distance);
 		distance += 100;
 	}
 
@@ -34,7 +34,7 @@ void MenuState::init() {
 	menu[selected_index].setFillColor(selected);
 
 }
-void MenuState::draw(const float dt) {
+void MenuState::draw() {
 	data->window.clear(sf::Color::White);
 	for (int i = 0; i < 3; i++) {
 		data->window.draw(menu[i]);
@@ -42,7 +42,7 @@ void MenuState::draw(const float dt) {
 	data->window.display();
 }
 
-void MenuState::update(const float dt) {
+void MenuState::update() {
 	if (selected_index > 0 && moveUp) { //it will only move up when current selected option is not the first one
 		menu[selected_index].setFillColor(unselected);
 		selected_index--;

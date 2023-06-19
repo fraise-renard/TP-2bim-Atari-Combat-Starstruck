@@ -11,16 +11,25 @@ GameState::GameState(GameDataRef data) {
 }
 
 void GameState::init() {
-	button_tex.loadFromFile("assets/sonic.png");
-	button.setTexture(button_tex);
-	button.setOrigin(button.getLocalBounds().width/2,
-			button.getLocalBounds().height/2);
-	button.setPosition(data->window.getSize().x / 2,
-			data->window.getSize().y / 2);
+Player astronaut(data, "wasd", "assets/astronaut/"), bilu(data, "arrow", "assets/etbilu/");
+players.push_back(astronaut);
+players.push_back(bilu);
+players.at(0).init();
+players.at(1).init();
+
 }
-void GameState::draw(const float dt) {
+void GameState::update(){
+	players.at(0).update();
+	players.at(1).update();
+}
+void GameState::draw() {
+	//players.at(0).draw();
+	//players.at(1).draw();
+	sf::Sprite asf;
+	sf::Texture sds;
 	data->window.clear(sf::Color(157, 121, 188));
-	data->window.draw(button);
+	players.at(0).draw();
+	players.at(1).draw();
 	data->window.display();
 }
 

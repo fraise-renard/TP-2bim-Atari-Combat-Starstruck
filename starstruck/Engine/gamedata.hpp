@@ -5,16 +5,17 @@
  *      Author: hayde
  */
 
-#ifndef ENGINE_TYPE_HPP_
-#define ENGINE_TYPE_HPP_
+#ifndef ENGINE_GAMEDATA_HPP_
+#define ENGINE_GAMEDATA_HPP_
 #include <Engine/statemachine.hpp>
 
 struct GameData{
 	StateMachine machine;
 	sf::RenderWindow window;
+	float dt;
 };
 typedef std::shared_ptr<GameData> GameDataRef;
 
 
 
-#endif /* ENGINE_TYPE_HPP_ */
+#endif /* ENGINE_GAMEDATA_HPP_ */

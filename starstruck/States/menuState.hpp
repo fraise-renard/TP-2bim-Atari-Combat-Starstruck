@@ -7,9 +7,9 @@
 #pragma once
 #ifndef STATES_MENUSTATE_HPP_
 #define STATES_MENUSTATE_HPP_
+#include <Engine/gamedata.hpp>
 #include <States/gameState.hpp>
 #include <Engine/statemachine.hpp>
-#include <Engine/type.hpp>
 #include <stdafx.hpp>
 
 
@@ -17,11 +17,11 @@ class MenuState: public State {
 public:
 	MenuState(GameDataRef data);
 	void init();
-	void draw(const float dt);
+	void draw();
 	void handleInput();
 	void options();
 	//void update();
-	void update(const float dt);
+	void update();
 	//void handleInput();
 
 private:

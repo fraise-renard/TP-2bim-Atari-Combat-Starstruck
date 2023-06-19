@@ -14,8 +14,8 @@ public:
 	virtual ~State(){};
 	virtual void init(){};
 	virtual void handleInput(){};
-	virtual void update(const float dt){};
-	virtual void draw(const float dt){};
+	virtual void update(){};
+	virtual void draw(){};
 	virtual void pause(){};
 	virtual void resume(){};
 };

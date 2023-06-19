@@ -5,16 +5,16 @@
  *      Author: hayde
  */
 #pragma once
-#ifndef ENGINE_GAME_HPP_
-#define ENGINE_GAME_HPP_
+#ifndef ENGINE_APPLICATION_HPP_
+#define ENGINE_APPLICATION_HPP_
+#include <Engine/gamedata.hpp>
 #include <stdafx.hpp>
-#include <Engine/type.hpp>
 #include <Engine/statemachine.hpp>
 #include <States/menuState.hpp>
 
-class Game{
+class Application{
 public:
-	Game(int width, int height);
+	Application(int width, int height);
 private:
 	const float dt= 1.0/60; //60 updates per second (framerate)
 	sf::Clock clock;
@@ -27,4 +27,4 @@ private:
 
 
 
-#endif /* ENGINE_GAME_HPP_ */
+#endif /* ENGINE_APPLICATION_HPP_ */
