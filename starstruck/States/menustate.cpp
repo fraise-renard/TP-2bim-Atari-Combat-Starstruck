@@ -9,10 +9,17 @@
 
 MenuState::MenuState(GameDataRef data) {
 	this->data = data;
+	selected_index = 0;
+	enter = false;
 }
 void MenuState::init() {
 	arcadefont.loadFromFile("assets/arcade.ttf");
-
+	menuMusic.openFromFile("assets/highway_to_hell.wav");
+	menuMusic.setLoop(true);
+	menuMusic.setVolume(40);
+	menuMusic.play();
+	selectBuf.loadFromFile("assets/switch.ogg");
+	select.setBuffer(selectBuf);
 	menu[0].setString("Play");
 	menu[1].setString("Options");
 	menu[2].setString("Exit");
@@ -44,12 +51,14 @@ void MenuState::draw() {
 
 void MenuState::update() {
 	if (selected_index > 0 && moveUp) { //it will only move up when current selected option is not the first one
+		select.play();
 		menu[selected_index].setFillColor(unselected);
 		selected_index--;
 		menu[selected_index].setFillColor(selected);
 		moveUp = false;
 	}
 	if (selected_index < 2 && moveDown) { //it will only move up when current selected option is not the last one
+		select.play();
 		menu[selected_index].setFillColor(unselected);
 		selected_index++;
 		menu[selected_index].setFillColor(selected);
@@ -64,10 +73,9 @@ void MenuState::handleInput() {
 	sf::Event event;
 	while (data->window.pollEvent(event)) {
 
-		if (event.type == sf::Event::KeyPressed
-				&& event.key.code == sf::Keyboard::Escape)
+		if (event.type == sf::Event::Closed) {
 			data->window.close();
-
+		}
 		if (event.type == sf::Event::KeyPressed) {
 			if (event.key.code == sf::Keyboard::Up) {
 				moveUp = true;
@@ -90,6 +98,8 @@ void MenuState::options() { //happens when entering an option
 	switch(selected_index){ //current index entered
 	case 0:
 		std::cout << "Play!";
+		menuMusic.setLoop(false);
+		menuMusic.stop();
 		data->machine.addState(StateRef(new GameState(data)), true);
 		enter = false;
 		break;

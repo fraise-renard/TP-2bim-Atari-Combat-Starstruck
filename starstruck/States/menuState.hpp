@@ -26,6 +26,9 @@ public:
 
 private:
 	GameDataRef data;
+	sf::Music menuMusic;
+	sf::SoundBuffer selectBuf;
+	sf::Sound select;
 	sf::Font arcadefont;
 	sf::Text menu[3];
 	int selected_index;

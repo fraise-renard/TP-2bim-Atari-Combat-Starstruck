@@ -16,18 +16,22 @@ public:
 	void update();
 	void draw();
 	void move();
-	void drag(){};
+	void rotate(std::string dir);
+	void friction();
 	void animate(){};
-	void collision(){};
+	void testCollision(sf::Sprite object);
+	bool testCollision(sf::RectangleShape wall);
 	sf::Sprite sprite;
+	int currentDir;
 private:
 	GameDataRef data;
 	std::string keyset, texPath;
 	sf::Keyboard::Key keyUp, keyDown, keyLeft, keyRight;
-	sf::Texture tex;
+	sf::Texture facing[9];
 	sf::Vector2f velocity, dir;
-	float acc = 1, maxVelocity = 7;
-	bool collide;
+	float acc = 1, maxVelocity = 3, drag = 0.5, multiplier = 60;
+	bool playerCollision = false, wallCollision = false;
+
 };
 
 
