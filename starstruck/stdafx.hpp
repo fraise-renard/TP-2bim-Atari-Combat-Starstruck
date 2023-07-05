@@ -13,6 +13,8 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <stack>
@@ -21,7 +23,7 @@
 #include <sstream>
 #include <memory>
 enum directions{
-	north, northeast, east, southeast, south, southwest, west, northwest
+	south, southwest, west, northwest, north, northeast, east, southeast
 };
 
 

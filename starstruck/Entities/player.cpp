@@ -10,17 +10,10 @@ Player::Player(GameDataRef data, std::string keyset, std::string texPath) :
 		data(data), keyset(keyset), texPath(texPath) {
 }
 void Player::init() {
-	int dirframes[9] = { 0, 6, 12, 17, 23, 29, 35, 40, 23};
-	int directions[9] = { south, southwest, west, northwest, north, northeast, east, southeast, 8};
-	for (int i = 0; i < 9; i++) {
-		std::stringstream path;
-		path << texPath << dirframes[i] << ".png";
-		facing[directions[i]].loadFromFile(path.str());
-	}
-	sprite.setTexture(facing[south]);
-	sprite.setOrigin(sprite.getGlobalBounds().width/2, sprite.getGlobalBounds().height/2);
-	sprite.setScale(1.125, 1.125);
 	currentDir = south;
+	sprite.setOrigin(sprite.getGlobalBounds().width / 2,
+			sprite.getGlobalBounds().height / 2);
+	sprite.setScale(1.125, 1.125);
 	if (keyset == "arrow") {
 		keyUp = sf::Keyboard::Up;
 		keyDown = sf::Keyboard::Down;
@@ -36,29 +29,32 @@ void Player::init() {
 }
 void Player::move() {
 	dir = (sf::Vector2f(0, 0));
-	if (sf::Keyboard::isKeyPressed(keyUp)) {
-		dir.y = -1;
-		if (velocity.y > -maxVelocity) {
-			velocity.y += acc * dir.y;
+	if (!blockMovement) {
+		if (sf::Keyboard::isKeyPressed(keyUp)) {
+			dir.y = -1;
+			if (velocity.y > -maxVelocity) {
+				velocity.y += acc * dir.y;
+			}
 		}
-	} else if (sf::Keyboard::isKeyPressed(keyDown)) {
-		dir.y = 1;
-		if (velocity.y < maxVelocity) {
-			velocity.y += acc * dir.y;
+		if (sf::Keyboard::isKeyPressed(keyLeft)) {
+					dir.x = -1;
+					if (velocity.x > -maxVelocity) {
+						velocity.x += acc * dir.x;
+					}
+				}
+		if (sf::Keyboard::isKeyPressed(keyDown)) {
+			dir.y = 1;
+			if (velocity.y < maxVelocity) {
+				velocity.y += acc * dir.y;
+			}
+		}
+		if (sf::Keyboard::isKeyPressed(keyRight)) {
+			dir.x = 1;
+			if (velocity.x < maxVelocity) {
+				velocity.x += acc * dir.x;
+			}
 		}
 	}
-	if (sf::Keyboard::isKeyPressed(keyLeft)) {
-		dir.x = -1;
-		if (velocity.x > -maxVelocity) {
-			velocity.x += acc * dir.x;
-		}
-	} else if (sf::Keyboard::isKeyPressed(keyRight)) {
-		dir.x = 1;
-		if (velocity.x < maxVelocity) {
-			velocity.x += acc * dir.x;
-		}
-	}
-
 }
 void Player::friction() {
 	//Up
@@ -101,15 +97,15 @@ void Player::friction() {
 }
 
 void Player::rotate(std::string dir) {
-	if (dir == "left") {
-		currentDir++;
-		if (currentDir >= 8)
-			currentDir = 0;
-	} else if (dir == "right") {
-		currentDir--;
-		if (currentDir <= 0)
-			currentDir = 8;
-	}
+		if (dir == "left") {
+			currentDir++;
+			if (currentDir >= 8)
+				currentDir = 0;
+		} else if (dir == "right") {
+			currentDir--;
+			if (currentDir < 0)
+				currentDir = 7;
+		}
 }
 void Player::testCollision(sf::Sprite object) {
 	if (sprite.getGlobalBounds().intersects(object.getGlobalBounds())) {
@@ -130,15 +126,113 @@ bool Player::testCollision(sf::RectangleShape wall) {
 void Player::draw() {
 	data->window.draw(sprite);
 }
-void Player::update() {
-	move();
-	friction();
-	if (playerCollision || wallCollision) {
-		velocity.x = -velocity.x*1.25;
-		velocity.y = -velocity.y*1.25;
+void Player::spin(float elapsedTime, bool *doRespawn) {
+	float factor = 0.15;
+	if (elapsedTime >= 0 && elapsedTime < factor) {
+		rotate("right");
+		countSpin++;
+	} else if (elapsedTime >= factor && elapsedTime < factor * 2) {
+		rotate("right");
+		countSpin++;
+	} else if (elapsedTime >= factor * 2 && elapsedTime < factor * 3) {
+		rotate("right");
+		countSpin++;
+	} else if (elapsedTime >= factor * 3 && elapsedTime < factor * 4) {
+		rotate("right");
+		countSpin++;
+	} else if (elapsedTime >= factor * 4 && elapsedTime < factor * 5) {
+		rotate("right");
+		countSpin++;
+	} else if (elapsedTime >= factor * 5 && elapsedTime < factor * 6) {
+		rotate("right");
+		countSpin++;
+	} else if (elapsedTime >= factor * 6 && elapsedTime < factor * 7) {
+		rotate("right");
+		countSpin++;
+	} else if (elapsedTime >= factor * 7 && elapsedTime < factor * 8) {
+		rotate("right");
+		countSpin++;
 	}
-	sprite.setTexture(facing[currentDir]);
+	if(countSpin == 48){
+		isIdle = true;
+		doSpin = false;
+		*doRespawn = true;
+		countSpin = 0;
+	}
+}
+void Player::idle(float elapsedTime) {
+	if (elapsedTime >= 0 && elapsedTime < 0.3) {
+		frame = dirframes[currentDir] + 1;
+	} else if (elapsedTime >= 0.3 && elapsedTime < 0.6) {
+		frame = dirframes[currentDir] + 2;
+	} else if (elapsedTime >= 0.6 && elapsedTime < 0.9) {
+		frame = dirframes[currentDir] + 3;
+	} else if (elapsedTime >= 0.9 && elapsedTime < 1.2) {
+		frame = dirframes[currentDir];
+	}
+	std::stringstream path;
+	path << texPath << frame << ".png";
+	frameTex.loadFromFile(path.str());
+}
+void Player::animate(float elapsedTime) {
+	std::stringstream path;
+	if ((elapsedTime >= 0 && elapsedTime < 0.3)
+			|| (elapsedTime >= 0.6 && elapsedTime < 0.9)) { //first frame
+		if (sf::Keyboard::isKeyPressed(keyUp)
+				|| sf::Keyboard::isKeyPressed(keyDown)
+				|| sf::Keyboard::isKeyPressed(keyLeft)
+				|| sf::Keyboard::isKeyPressed(keyRight)) {
+			isIdle = false;
+			if (currentDir == west || currentDir == east) {
+				frame = dirframes[currentDir];
+			} else {
+				frame = dirframes[currentDir] + 4;
+			}
+
+		} else {
+			isIdle = true;
+		}
+		path << texPath << frame << ".png";
+		frameTex.loadFromFile(path.str());
+
+	} else if ((elapsedTime >= 0.3 && elapsedTime < 0.6)
+			|| (elapsedTime >= 0.9 && elapsedTime < 1.2)) { //second frame
+		if (sf::Keyboard::isKeyPressed(keyUp)
+				|| sf::Keyboard::isKeyPressed(keyDown)
+				|| sf::Keyboard::isKeyPressed(keyLeft)
+				|| sf::Keyboard::isKeyPressed(keyRight)) {
+			isIdle = false;
+			if (currentDir == west || currentDir == east) {
+				frame = dirframes[currentDir] + 4;
+			} else {
+				frame = dirframes[currentDir] + 5;
+			}
+
+		} else {
+			isIdle = true;
+		}
+		path << texPath << frame << ".png";
+		frameTex.loadFromFile(path.str());
+	}
+}
+void Player::update(float elapsedTime, bool *doRespawn) {
+	if(!blockMovement){
+		move();
+	}
+	friction();
+	animate(elapsedTime);
+	if (isIdle) {
+		idle(elapsedTime);
+	}
+	if (doSpin){
+		spin(elapsedTime, &*doRespawn);
+	}
+	if (playerCollision || wallCollision) {
+		velocity.x = -velocity.x * 1.25;
+		velocity.y = -velocity.y * 1.25;
+	}
 	sprite.move(velocity.x * data->dt * multiplier,
 			velocity.y * data->dt * multiplier);
+	sprite.setTexture(frameTex);
 }
 

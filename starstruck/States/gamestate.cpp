@@ -11,6 +11,7 @@ GameState::GameState(GameDataRef data) {
 }
 
 void GameState::init() {
+	elapsedTime = frametime.restart().asSeconds();
 	gameMusic.openFromFile("assets/interstellar.wav");
 	gameMusic.setVolume(17.f);
 	gameMusic.setLoop(true);
@@ -26,18 +27,86 @@ void GameState::init() {
 	hitsound.setBuffer(hitbuf);
 	pewsound.setBuffer(pewbuf);
 	score.init();
-	map.init(1);
-	players.at(0).sprite.setPosition(ww / 2, wh / 2);
-	players.at(1).sprite.setPosition(700, 500);
+	map.init(level);
+	players.at(0).sprite.setPosition(50, wh / 2);
+	players.at(1).sprite.setPosition(ww - 105, wh / 2);
 
 }
+void GameState::pause(int damaged) {
+	for (int i = 0; i < players.size(); i++) {
+		players.at(i).blockMovement = true;
+		players.at(i).blockRot = true;
+		players.at(i).blockBullet = true;
+	}
+	players.at(damaged).doSpin = true;
+	this->damaged = damaged;
+}
+void GameState::resume() {
+	std::srand(time(NULL));
+	int corner;
+	do {
+		corner = std::rand() % 4 + 1;
+	} while (corner == corner_old);
+	corner_old = corner;
+	sf::Vector2f pos;
+	switch (corner) {
+	case 1:
+		pos.x = 50;
+		pos.y = 160.0;
+		break;
+	case 2:
+		pos.x = ww - 105;
+		pos.y = 160.0;
+		break;
+	case 3:
+		pos.x = ww - 105;
+		pos.y = wh - 105;
+		break;
+	case 4:
+		pos.x = 50;
+		pos.y = wh - 105;
+		break;
+	}
+	players.at(damaged).sprite.setPosition(pos);
+	for (int i = 0; i < players.size(); i++) {
+		players.at(i).blockMovement = false;
+		players.at(i).blockRot = false;
+		players.at(i).blockBullet = false;
+	}
+}
 void GameState::update() {
+	if ((ast_points == 5 || bilu_points == 5) && !players.at(damaged).doSpin) {
+		doRespawn = false;
+		level++;
+		if (level > 3) {
+			level = 3;
+		}
+		map.init(level);
+		players.at(0).sprite.setPosition(50, wh / 2);
+		players.at(1).sprite.setPosition(ww - 105, wh / 2);
+		ast_points = 0;
+		bilu_points = 0;
+		for (int i = 0; i < players.size(); i++) {
+			players.at(i).blockMovement = false;
+			players.at(i).blockRot = false;
+			players.at(i).blockBullet = false;
+		}
+	}
+	if (doRespawn) {
+		resume();
+		doRespawn = false;
+	}
+	if (elapsedTime >= 1.2) {
+		elapsedTime = frametime.restart().asSeconds();
+	}
+	elapsedTime = frametime.getElapsedTime().asSeconds();
 	starCooldown += data->dt;
 	rayCooldown += data->dt;
 	for (int i = 0; i < stars.size(); i++) {
 		stars[i].update(data->dt);
 		if (stars[i].testCollision(players.at(1).sprite)) {
 			stars.erase(std::next(stars.begin(), i));
+			pause(1);
 			hitsound.play();
 			ast_points++;
 		}
@@ -47,6 +116,7 @@ void GameState::update() {
 		rays[i].update(data->dt);
 		if (rays[i].testCollision(players.at(0).sprite)) {
 			rays.erase(std::next(rays.begin(), i));
+			pause(0);
 			hitsound.play();
 			bilu_points++;
 		}
@@ -75,8 +145,8 @@ void GameState::update() {
 
 	players.at(0).testCollision(players.at(1).sprite);
 	players.at(1).testCollision(players.at(0).sprite);
-	players.at(0).update();
-	players.at(1).update();
+	players.at(0).update(elapsedTime, &doRespawn);
+	players.at(1).update(elapsedTime, &doRespawn);
 	score.update(ast_points, bilu_points);
 }
 void GameState::draw() {
@@ -92,7 +162,7 @@ void GameState::draw() {
 	};
 	players.at(0).draw();
 	players.at(1).draw();
-	for(int i = 0; i < 2; i++){
+	for (int i = 0; i < 2; i++) {
 		data->window.draw(score.points[i]);
 	}
 	data->window.display();
@@ -106,23 +176,39 @@ void GameState::handleInput() {
 		}
 		if (event.type == sf::Event::KeyReleased
 				&& event.key.code == sf::Keyboard::C) {
-			players.at(0).rotate("left");
+			if (!players.at(0).blockRot) {
+				players.at(0).rotate("left");
+			}
 		}
 		if (event.type == sf::Event::KeyReleased
 				&& event.key.code == sf::Keyboard::V) {
-			players.at(0).rotate("right");
+			if (!players.at(0).blockRot) {
+				players.at(0).rotate("right");
+			}
 		}
 		if (event.type == sf::Event::KeyReleased
 				&& event.key.code == sf::Keyboard::Comma) {
-			players.at(1).rotate("left");
+			if (!players.at(1).blockRot) {
+				players.at(1).rotate("left");
+			}
 		}
 		if (event.type == sf::Event::KeyReleased
 				&& event.key.code == sf::Keyboard::Period) {
-			players.at(1).rotate("right");
+			if (!players.at(1).blockRot) {
+				players.at(1).rotate("right");
+			}
 		}
 		if (event.type == sf::Event::KeyPressed
+						&& event.key.code == players.at(0).keyRight) {
+			players.at(0).moveRight = true;
+				}
+		if (event.type == sf::Event::KeyReleased
+						&& event.key.code == players.at(0).keyRight) {
+			players.at(0).moveRight = false;
+				}
+		if (event.type == sf::Event::KeyPressed
 				&& event.key.code == sf::Keyboard::B) {
-			if (starCooldown >= 0.6) {
+			if (starCooldown >= 0.6 && !players.at(0).blockBullet) {
 				starCooldown = 0;
 				pewsound.play();
 				Bullet b1(players.at(0).currentDir, players.at(0).sprite, data,
@@ -133,7 +219,7 @@ void GameState::handleInput() {
 		}
 		if (event.type == sf::Event::KeyPressed
 				&& event.key.code == sf::Keyboard::RControl) {
-			if (rayCooldown >= 0.6) {
+			if (rayCooldown >= 0.6 && !players.at(1).blockBullet) {
 				rayCooldown = 0;
 				pewsound.play();
 				Bullet b2(players.at(1).currentDir, players.at(1).sprite, data,

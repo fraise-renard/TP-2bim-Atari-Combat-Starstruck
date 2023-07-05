@@ -22,6 +22,8 @@ public:
 	void update();
 	void handleInput();
 	void draw();
+	void pause(int damaged);
+	void resume();
 
 private:
 	GameDataRef data;
@@ -30,8 +32,10 @@ private:
 	sf::Music gameMusic;
 	Map map;
 	Score score;
-	int ast_points = 0, bilu_points = 0;
-	float starCooldown = 0, rayCooldown = 0;
+	bool doRespawn = NULL;
+	int ast_points = 0, bilu_points = 0, damaged = 0, corner_old = 0, level = 1;
+	float starCooldown = 0, rayCooldown = 0, elapsedTime;
+	sf::Clock frametime;
 	std::vector<Player> players;
 	std::vector<Bullet> stars;
 	std::vector<Bullet> rays;

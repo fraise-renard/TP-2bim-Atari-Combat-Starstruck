@@ -10,7 +10,7 @@
 #include <stdafx.hpp>
 #include <Engine/gamedata.hpp>
 #include <Entities/Entity.hpp>
-class Bullet{
+class Bullet : public Entity{
 public:
 	Bullet(int currentDir, sf::Sprite origin, GameDataRef data, std::string texPath);
 	void init();

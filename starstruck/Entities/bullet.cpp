@@ -60,20 +60,13 @@ Bullet::Bullet(int currentDir, sf::Sprite origin, GameDataRef data,
 		x = std::cos(angleRad);
 		y = -std::sin(angleRad);
 		break;
-	case 8:
-		angle = 270;
-		angleRad = angle * (3.14 / 180.0);
-		x = std::cos(angleRad);
-		y = std::sin(angleRad);
-		break;
 	}
 }
 void Bullet::init() {
 	texture.loadFromFile(texPath);
 	bullet.setOrigin(bullet.getGlobalBounds().width / 2,
 			bullet.getGlobalBounds().height / 2);
-	bullet.setPosition(pos.x - origin.getGlobalBounds().width / 2,
-			pos.y - origin.getGlobalBounds().height / 2);
+	bullet.setPosition(pos.x,pos.y);
 }
 bool Bullet::testCollision(sf::Sprite target){
 	if(bullet.getGlobalBounds().intersects(target.getGlobalBounds())){
