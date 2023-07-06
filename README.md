@@ -1,17 +1,17 @@
 # TP-2bim-Atari-Combat-Starstruck
 Atari Combat game reboot named "Starstruck", using SFML and C++. Developed by @nubyoli, @SarahSdSO and me. School assignment made for CEFET Informatics course junior's year second bimester.
 
-## LINGUAGENS E TÉCNICAS DE PROGRAMAÇÃO: INFO-2 (T2)
+### LINGUAGENS E TÉCNICAS DE PROGRAMAÇÃO: INFO-2 (T2)
 
 Jogo recriado: Combat (1977) do Atari 2600
 __________________________________________________________________________________________________
-Grupo 08: 
+### Grupo 08: 
 - Mel Raposeiras Ricaldoni
 - Núbia Torres de Oliveira
 - Sarah dos Santos Oliveira
 __________________________________________________________________________________________________
 
-INSTRUÇÕES PARA CONFIGURAR O PROJETO DO JOGO E EXECUTÁ-LO
+### INSTRUÇÕES PARA CONFIGURAR O PROJETO DO JOGO E EXECUTÁ-LO
 
 1°) O trabalho foi desenvolvido utilizando o GCC (MingW) na versão 7.3.0, além da biblioteca 
 SFML na versão 2.5.1. Dessa forma, para os próximos passos envolvendo as configurações do projeto
