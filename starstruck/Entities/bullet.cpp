@@ -10,6 +10,7 @@ Bullet::Bullet(int currentDir, sf::Sprite origin, GameDataRef data,
 	this->data = data;
 	this->texPath = texPath;
 	this->origin = origin;
+	this->currentDir = currentDir;
 	pos = origin.getPosition();
 	switch (currentDir) {
 	case south:
@@ -64,29 +65,29 @@ Bullet::Bullet(int currentDir, sf::Sprite origin, GameDataRef data,
 }
 void Bullet::init() {
 	texture.loadFromFile(texPath);
+	bullet.setTexture(texture);
+	bullet.setScale(0.11, 0.11);
 	bullet.setOrigin(bullet.getGlobalBounds().width / 2,
 			bullet.getGlobalBounds().height / 2);
-	bullet.setPosition(pos.x,pos.y);
+	bullet.setPosition(pos.x + bullet.getGlobalBounds().width / 2,
+			pos.y + bullet.getGlobalBounds().height);
 }
-bool Bullet::testCollision(sf::Sprite target){
-	if(bullet.getGlobalBounds().intersects(target.getGlobalBounds())){
+bool Bullet::testCollision(sf::Sprite target) {
+	if (bullet.getGlobalBounds().intersects(target.getGlobalBounds())) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 }
-bool Bullet::testCollision(sf::RectangleShape wall){
-	if(bullet.getGlobalBounds().intersects(wall.getGlobalBounds())){
+bool Bullet::testCollision(sf::RectangleShape wall) {
+	if (bullet.getGlobalBounds().intersects(wall.getGlobalBounds())) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 }
 void Bullet::draw() {
 	bullet.setTexture(texture);
-
-	bullet.setScale(0.11, 0.11);
-
 	data->window.draw(bullet);
 }
 void Bullet::update(float dt) {

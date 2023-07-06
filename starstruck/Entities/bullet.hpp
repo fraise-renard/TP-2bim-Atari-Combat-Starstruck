@@ -26,6 +26,7 @@ private:
 	sf::Texture texture;
 	sf::Vector2f velocity;
 	sf::Sprite origin;
+	int currentDir;
 	float angle = 0, angleRad = 0, vel = 3, x, y;
 
 };

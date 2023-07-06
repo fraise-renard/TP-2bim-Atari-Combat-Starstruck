@@ -25,16 +25,16 @@ public:
 	bool testCollision(sf::RectangleShape wall);
 	sf::Sprite sprite;
 	int currentDir = 0;
-	bool blockMovement = false, blockRot = false, isIdle = true, blockBullet = false, doSpin = false, moveRight = NULL;;
-	sf::Keyboard::Key keyRight;
+	bool blockMovement = false, blockRot = false, isIdle = true, blockBullet = false, doSpin = false,
+			blockAnimation = false;
 private:
 	GameDataRef data;
 	std::string keyset, texPath;
 	sf::Texture frameTex;
+	sf::Keyboard::Key keyUp, keyDown, keyRight, keyLeft;
 	int dirframes[8] = { 0, 6, 12, 17, 23, 29, 35, 40}, frame = NULL, countSpin = 0;
 	sf::Vector2f velocity, dir;
 	float acc = 1, maxVelocity = 3, drag = 0.5, multiplier = 60;
-	sf::Keyboard::Key keyUp, keyDown, keyLeft;
 	bool playerCollision = false, wallCollision = false;
 
 };

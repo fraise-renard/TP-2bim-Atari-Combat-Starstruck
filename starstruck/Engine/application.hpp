@@ -18,7 +18,6 @@ public:
 private:
 	const float dt= 1.0/60; //60 updates per second (framerate)
 	sf::Clock clock;
-	sf::Event event;
 	GameDataRef game_data = std::make_shared<GameData>();
 
 	void Run();

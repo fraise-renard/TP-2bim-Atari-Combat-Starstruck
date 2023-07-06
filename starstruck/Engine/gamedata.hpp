@@ -13,6 +13,7 @@ struct GameData{
 	StateMachine machine;
 	sf::RenderWindow window;
 	float dt;
+	float volume;
 };
 typedef std::shared_ptr<GameData> GameDataRef;
 

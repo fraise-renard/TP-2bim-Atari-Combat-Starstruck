@@ -29,11 +29,12 @@ private:
 	GameDataRef data;
 	sf::SoundBuffer hitbuf, pewbuf;
 	sf::Sound hitsound, pewsound;
-	sf::Music gameMusic;
+	sf::Music levelMusic;
 	Map map;
+	sf::Color bg{157, 121, 188};
 	Score score;
 	bool doRespawn = NULL;
-	int ast_points = 0, bilu_points = 0, damaged = 0, corner_old = 0, level = 1;
+	int ast_points = 0, bilu_points = 0, damaged = 0, corner_old = 0, level = 1, maxPoints = 5;
 	float starCooldown = 0, rayCooldown = 0, elapsedTime;
 	sf::Clock frametime;
 	std::vector<Player> players;

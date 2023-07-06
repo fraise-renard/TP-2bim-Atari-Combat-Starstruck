@@ -8,14 +8,15 @@
 
 GameState::GameState(GameDataRef data) {
 	this->data = data;
+	elapsedTime = 0;
 }
 
 void GameState::init() {
 	elapsedTime = frametime.restart().asSeconds();
-	gameMusic.openFromFile("assets/interstellar.wav");
-	gameMusic.setVolume(17.f);
-	gameMusic.setLoop(true);
-	gameMusic.play();
+	levelMusic.openFromFile("assets/interstellar.wav");
+	levelMusic.setVolume(data->volume);
+	levelMusic.setLoop(true);
+	levelMusic.play();
 	Player astronaut(data, "wasd", "assets/astronaut/"), bilu(data, "arrow",
 			"assets/etbilu/");
 	players.push_back(astronaut);
@@ -30,13 +31,13 @@ void GameState::init() {
 	map.init(level);
 	players.at(0).sprite.setPosition(50, wh / 2);
 	players.at(1).sprite.setPosition(ww - 105, wh / 2);
-
 }
 void GameState::pause(int damaged) {
 	for (int i = 0; i < players.size(); i++) {
 		players.at(i).blockMovement = true;
 		players.at(i).blockRot = true;
 		players.at(i).blockBullet = true;
+		players.at(i).blockAnimation = true;
 	}
 	players.at(damaged).doSpin = true;
 	this->damaged = damaged;
@@ -72,14 +73,34 @@ void GameState::resume() {
 		players.at(i).blockMovement = false;
 		players.at(i).blockRot = false;
 		players.at(i).blockBullet = false;
+		players.at(i).blockAnimation = false;
 	}
 }
 void GameState::update() {
-	if ((ast_points == 5 || bilu_points == 5) && !players.at(damaged).doSpin) {
+	if ((ast_points == maxPoints || bilu_points == maxPoints) && !players.at(damaged).doSpin) {
 		doRespawn = false;
 		level++;
 		if (level > 3) {
-			level = 3;
+			level = 1;
+		}
+		if(level == 1){
+			maxPoints = 5;
+			levelMusic.stop();
+			levelMusic.openFromFile("assets/interstellar.wav");
+			levelMusic.play();
+			bg = {157, 121, 188};
+		}else if(level == 2){
+			maxPoints = 7;
+			levelMusic.stop();
+			levelMusic.openFromFile("assets/crawling.wav");
+			levelMusic.play();
+			bg = {83, 164, 181};
+		}else if (level == 3){
+			maxPoints = 10;
+			levelMusic.stop();
+			levelMusic.openFromFile("assets/master_of_puppets.wav");
+			levelMusic.play();
+			bg = {180, 37, 41};
 		}
 		map.init(level);
 		players.at(0).sprite.setPosition(50, wh / 2);
@@ -90,6 +111,7 @@ void GameState::update() {
 			players.at(i).blockMovement = false;
 			players.at(i).blockRot = false;
 			players.at(i).blockBullet = false;
+			players.at(i).blockAnimation = false;
 		}
 	}
 	if (doRespawn) {
@@ -150,7 +172,7 @@ void GameState::update() {
 	score.update(ast_points, bilu_points);
 }
 void GameState::draw() {
-	data->window.clear(sf::Color(157, 121, 188));
+	data->window.clear(bg);
 	for (int i = 0; i < map.walls.size(); i++) {
 		data->window.draw(map.walls[i]);
 	};
@@ -167,7 +189,6 @@ void GameState::draw() {
 	}
 	data->window.display();
 }
-
 void GameState::handleInput() {
 	sf::Event event;
 	while (data->window.pollEvent(event)) {
@@ -198,14 +219,6 @@ void GameState::handleInput() {
 				players.at(1).rotate("right");
 			}
 		}
-		if (event.type == sf::Event::KeyPressed
-						&& event.key.code == players.at(0).keyRight) {
-			players.at(0).moveRight = true;
-				}
-		if (event.type == sf::Event::KeyReleased
-						&& event.key.code == players.at(0).keyRight) {
-			players.at(0).moveRight = false;
-				}
 		if (event.type == sf::Event::KeyPressed
 				&& event.key.code == sf::Keyboard::B) {
 			if (starCooldown >= 0.6 && !players.at(0).blockBullet) {

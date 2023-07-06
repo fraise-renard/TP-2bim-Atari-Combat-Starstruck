@@ -35,20 +35,17 @@ void Player::move() {
 			if (velocity.y > -maxVelocity) {
 				velocity.y += acc * dir.y;
 			}
-		}
-		if (sf::Keyboard::isKeyPressed(keyLeft)) {
-					dir.x = -1;
-					if (velocity.x > -maxVelocity) {
-						velocity.x += acc * dir.x;
-					}
-				}
-		if (sf::Keyboard::isKeyPressed(keyDown)) {
+		} else if (sf::Keyboard::isKeyPressed(keyLeft)) {
+			dir.x = -1;
+			if (velocity.x > -maxVelocity) {
+				velocity.x += acc * dir.x;
+			}
+		} else if (sf::Keyboard::isKeyPressed(keyDown)) {
 			dir.y = 1;
 			if (velocity.y < maxVelocity) {
 				velocity.y += acc * dir.y;
 			}
-		}
-		if (sf::Keyboard::isKeyPressed(keyRight)) {
+		} else if (sf::Keyboard::isKeyPressed(keyRight)) {
 			dir.x = 1;
 			if (velocity.x < maxVelocity) {
 				velocity.x += acc * dir.x;
@@ -97,15 +94,15 @@ void Player::friction() {
 }
 
 void Player::rotate(std::string dir) {
-		if (dir == "left") {
-			currentDir++;
-			if (currentDir >= 8)
-				currentDir = 0;
-		} else if (dir == "right") {
-			currentDir--;
-			if (currentDir < 0)
-				currentDir = 7;
-		}
+	if (dir == "left") {
+		currentDir++;
+		if (currentDir >= 8)
+			currentDir = 0;
+	} else if (dir == "right") {
+		currentDir--;
+		if (currentDir < 0)
+			currentDir = 7;
+	}
 }
 void Player::testCollision(sf::Sprite object) {
 	if (sprite.getGlobalBounds().intersects(object.getGlobalBounds())) {
@@ -153,7 +150,7 @@ void Player::spin(float elapsedTime, bool *doRespawn) {
 		rotate("right");
 		countSpin++;
 	}
-	if(countSpin == 48){
+	if (countSpin == 48) {
 		isIdle = true;
 		doSpin = false;
 		*doRespawn = true;
@@ -216,15 +213,17 @@ void Player::animate(float elapsedTime) {
 	}
 }
 void Player::update(float elapsedTime, bool *doRespawn) {
-	if(!blockMovement){
+	if (!blockMovement) {
 		move();
 	}
 	friction();
-	animate(elapsedTime);
+	if (!blockAnimation) {
+		animate(elapsedTime);
+	}
 	if (isIdle) {
 		idle(elapsedTime);
 	}
-	if (doSpin){
+	if (doSpin) {
 		spin(elapsedTime, &*doRespawn);
 	}
 	if (playerCollision || wallCollision) {
